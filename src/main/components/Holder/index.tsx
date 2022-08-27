@@ -1,18 +1,18 @@
 import styled from "styled-components/macro"
-import { Input, Currencies, Stats } from "src/main/components"
-import { ChangeEvent} from "react"
+import { Input, Currencies } from "src/main/components"
+import { ChangeEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import {selectAllCurrencies, selectCurrencyInput } from "src/main/bll/selectors"
+import { selectAllCurrencies, selectCurrencyInput } from "src/main/bll/selectors"
 import { AppDispatch } from "src/main/bll/store"
-import { fetchCurrencies, updateCurrencyInputValue } from "src/main/bll/reducers/currencyReducer"
-import { selectCurrentCurrency } from "src/main/bll/selectors/selectCurrentCurrency"
+import { fetchCurrencies, fetchCurrentCurrencyInfo, updateCurrencyInputValue } from "src/main/bll/reducers/currencyReducer"
+import { selectCurrentCurrencyName } from "src/main/bll/selectors/selectCurrentCurrencyName"
 
 export const Holder = () => {
+    const dispatch = useDispatch<AppDispatch>()
+    const [didRender, setDidRender] = useState(false)
     const currencyInputValue = useSelector(selectCurrencyInput)
     const allCurrencies = useSelector(selectAllCurrencies)
-    const currentCurrency = useSelector(selectCurrentCurrency)
-
-    const dispatch = useDispatch<AppDispatch>()
+    const currentCurrencyName = useSelector(selectCurrentCurrencyName)
 
     const handleUpdateCurrencyInputValue = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.currentTarget.value.toUpperCase()
@@ -22,6 +22,17 @@ export const Holder = () => {
     const fetchAllCurrecyData = () => {
         dispatch(fetchCurrencies())
     }
+
+    useEffect(() => {
+        setDidRender(true);
+    }, []);
+
+    useEffect(() => {
+        if (didRender) {
+            dispatch(fetchCurrentCurrencyInfo())
+        }
+    }, [currentCurrencyName])
+
 
     return (
         <Wrapper>
@@ -35,7 +46,7 @@ export const Holder = () => {
                 />
                 {allCurrencies && <Currencies />}
             </Inner>
-            {currentCurrency && <Stats currency={currentCurrency}/>}
+
         </Wrapper>
     )
 }

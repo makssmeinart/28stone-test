@@ -1,10 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { currencyApi } from "src/main/dal/currencyApi"
+import { currencyApi, CurrentCurrencyInfoPayloadType } from "src/main/dal/currencyApi"
+import { RootState } from "../store"
 
 const initialState: InitialStateType = {
     currencyInputField: "",
     allCurrencies: null,
-    currentCurrency: null,
+    currentCurrencyInfo: null,
+    currentCurrencyName: null,
+    currencyHistoryTime: "15min",
 }
 
 export const fetchCurrencies = createAsyncThunk("currency/fetchCurrencies", async () => {
@@ -18,6 +21,23 @@ export const fetchCurrencies = createAsyncThunk("currency/fetchCurrencies", asyn
     }
 })
 
+export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentCurrencyInfo", async ({}, { getState }) => {
+    const { currencyReducer } = getState() as RootState
+    const { currentCurrencyName, currencyHistoryTime } = currencyReducer
+
+    const formatedCurrency = currentCurrencyName?.split("/").join("")
+
+    const payload: CurrentCurrencyInfoPayloadType = { time: currencyHistoryTime, currencyPair: formatedCurrency ? formatedCurrency : "EURUSD" }
+
+    try {
+        const currencyData = await currencyApi.fetchCurrentCurrencyInfo(payload)
+        return currencyData
+    }
+    catch (e) {
+        throw (e)
+    }
+})
+
 const currencySlice = createSlice({
     name: 'currency',
     initialState,
@@ -25,8 +45,8 @@ const currencySlice = createSlice({
         updateCurrencyInputValue: (state, action: PayloadAction<string>) => {
             state.currencyInputField = action.payload
         },
-        updateCurrentCurrency: (state, action: PayloadAction<CurrencyType>) => {
-            state.currentCurrency = action.payload
+        updateCurrentCurrencyName: (state, action: PayloadAction<string>) => {
+            state.currentCurrencyName = action.payload
         }
     },
     extraReducers(builder) {
@@ -35,8 +55,6 @@ const currencySlice = createSlice({
             // We want to make sure that if there are no currencies or search string is empty we want the value to be null not Array(0) so the UI don't break
             const currenciesEmpty = sortedCurrencies.length === 0 || state.currencyInputField.length === 0
             state.allCurrencies = currenciesEmpty ? null : sortedCurrencies
-            // If we search for new query we want to reset currentCurrency to null
-            state.currentCurrency = null
         })
     },
 })
@@ -44,14 +62,16 @@ const currencySlice = createSlice({
 // Actions 
 
 export const updateCurrencyInputValue = currencySlice.actions.updateCurrencyInputValue
-export const updateCurrentCurrency = currencySlice.actions.updateCurrentCurrency
+export const updateCurrentCurrencyName = currencySlice.actions.updateCurrentCurrencyName
 
 export const currencyReducer = currencySlice.reducer
 
 type InitialStateType = {
     currencyInputField: string
     allCurrencies: CurrencyType[] | null
-    currentCurrency: CurrencyType | null
+    currentCurrencyInfo: CurrentCurrencyInfoType | null
+    currentCurrencyName: string | null
+    currencyHistoryTime: string
 }
 
 export type CurrencyType = {
@@ -63,4 +83,14 @@ export type CurrencyType = {
     high: string;
     changes: number;
     date: string;
+}
+
+type CurrentCurrencyDataType = {
+    index: string | number
+    value: string | number
+}
+
+type CurrentCurrencyInfoType = {
+    labe: string
+    data: CurrentCurrencyDataType[]
 }

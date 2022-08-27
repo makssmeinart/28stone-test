@@ -1,5 +1,7 @@
-import { useDispatch } from "react-redux"
-import { CurrencyType, updateCurrentCurrency } from "src/main/bll/reducers/currencyReducer"
+import React, { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { CurrencyType, fetchCurrentCurrencyInfo, updateCurrentCurrencyName } from "src/main/bll/reducers/currencyReducer"
+import { selectCurrentCurrencyName } from "src/main/bll/selectors/selectCurrentCurrencyName"
 import { AppDispatch } from "src/main/bll/store"
 import styled from "styled-components"
 
@@ -8,32 +10,31 @@ type CurrencyPropsType = {
     tableIndex: number
 }
 
-export const Currency = ({ currency, tableIndex }: CurrencyPropsType) => {
+export const Currency = React.memo(({ currency, tableIndex }: CurrencyPropsType) => {
+    const { date, ticker } = currency
     const dispatch = useDispatch<AppDispatch>()
 
-    const { date, ticker } = currency
-
-    const formattedDate = () => {
-        return date.split(" ")[0]
-    }
-
-    const changeCurrentCurrencie = () => {
-        dispatch(updateCurrentCurrency(currency))
+    const handleFetchCurrentCurrencyInfo = () => {
+        dispatch(updateCurrentCurrencyName(ticker))
     }
 
     return (
         <Wrapper
             tabIndex={tableIndex}
-            onClick={changeCurrentCurrencie}
+            onClick={handleFetchCurrentCurrencyInfo}
         >
             <Ticker>{ticker}</Ticker>
-            <Date>Date: <span>{formattedDate()}</span></Date>
+            <div>
+                <div>BID</div>
+                <div>LOW</div>
+            </div>
         </Wrapper>
     )
-}
+})
 
 const Wrapper = styled.div`
     display: flex;
+    align-items: center;
     flex-direction: column;
     padding: 1em 1em .5em 0;
     gap: .3em;
@@ -46,7 +47,7 @@ const Wrapper = styled.div`
 `
 
 const Ticker = styled.p`
-    font-size: 1rem;
+    font-size: .9rem;
     font-weight: bold;
     color: var(--primary-color);
 `

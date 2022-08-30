@@ -40,7 +40,7 @@ export const Holder = () => {
                 {/* We can incapsulate all the value, placeholder... Inside of the Input component but we wont be able to re-use it if we will need to. */}
                 <Input
                     value={currencyInputValue}
-                    placeholder={"EUR/USD"}
+                    placeholder={"Search currency value"}
                     onChange={handleUpdateCurrencyInputValue}
                     onButtonClick={fetchAllCurrecyData}
                 />
@@ -53,10 +53,11 @@ export const Holder = () => {
 
 const Wrapper = styled.div`
     max-height: 700px;
+    min-width: 320px;
     display: flex;
     gap: 1rem;
     margin: 0 1.5em;
-    padding: 1.5rem 2rem;
+    padding: 1.2rem 2rem;
     background-color: var(--fourth-color);
     border-radius: 1rem;
     overflow: hidden;
@@ -68,6 +69,7 @@ const Wrapper = styled.div`
 
 const Inner = styled.div`
     overflow-y: hidden;
+    width: 100%;
 `
 
 const Content = styled.div``

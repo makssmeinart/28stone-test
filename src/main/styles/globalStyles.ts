@@ -5,7 +5,7 @@ export const GlobalStyles = createGlobalStyle`
 :root {
     --first-color: #233142;
     --second-color: #455d7a;
-    --third-color: #f95959;
+    --accent-color: #f95959;
     --fourth-color: #e3e3e3;
 }
 
@@ -21,6 +21,7 @@ body {
     font-size: 16px;
     background-color: var(--first-color);
     color: var(--second-color);
+    font-family: 'Roboto', sans-serif;
 }
 
 li {

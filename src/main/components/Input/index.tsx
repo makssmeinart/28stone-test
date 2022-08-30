@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, { keyframes } from "styled-components"
 import { IconButton } from "src/main/components"
 
 type InputPropsValueType = {
@@ -8,7 +8,7 @@ type InputPropsValueType = {
     onButtonClick: () => void
 }
 
-export const Input = ({value,placeholder,onChange,onButtonClick,}: InputPropsValueType) => {
+export const Input = ({ value, placeholder, onChange, onButtonClick, }: InputPropsValueType) => {
 
     return (
         <Wrapper>
@@ -27,20 +27,36 @@ const Wrapper = styled.div`
 `
 
 const InputField = styled.input`
-    height: 40px;
+    height: 50px;
     width: 100%;
-    border: 1px solid var(--first-color);
-    padding: 2px 35px 2px 5px;
+    border: 2px solid var(--first-color);
+    padding: 2px 50px 2px 5px;
     outline: none;
     font-weight: 600;
-    color: var(--first-color);
+    font-size: 1rem;
+    color: var(--fourth-color);
+    border: 2px solid transparent;
+    background-color: var(--first-color);
 
     &:focus {
-        box-shadow: 0px 0px 2px var(--first-color);
+        border: 2px solid var(--second-color);
+       }
+
+    &:focus-within + div div {
+        animation: 1.7s linear .1s wobble-animation infinite;
     }
 
     &::placeholder {
-        color: var(--second-color);
+        color: var(--fourth-color);
         letter-spacing: 1px;
     }
+
+    @keyframes wobble-animation {
+    0% { transform: translateX(0px)}
+    25% { transform: translateX(2.5px)}
+    50% { transform: translateX(5px)}
+    75% { transform: translateX(2.5px)}
+    100% { transform: translateX(0px)}
+}
 `
+

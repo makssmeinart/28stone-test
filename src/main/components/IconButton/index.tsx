@@ -5,7 +5,7 @@ export const IconButton = ({ onClick }: IconButtonPropsType) => {
 
     return (
         <Wrapper>
-            <Button onClick={onClick} >
+            <Button data-testid="icon-button" onClick={onClick} >
                 <img src={arrowLeft} alt="Search query" />
             </Button>
         </Wrapper>

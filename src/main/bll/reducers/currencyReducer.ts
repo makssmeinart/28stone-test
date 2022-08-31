@@ -21,15 +21,13 @@ export const fetchCurrencies = createAsyncThunk("currency/fetchCurrencies", asyn
     }
 })
 
-export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentCurrencyInfo", async ({ }, { getState }) => {
+export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentCurrencyInfo", async (temp: string, { getState }) => {
     const { currencyReducer } = getState() as RootState
     const { currentCurrencyName, currencyHistoryTime } = currencyReducer
 
     const formatedCurrency = currentCurrencyName?.split("/").join("")
 
     const payload: CurrentCurrencyInfoPayloadType = { time: currencyHistoryTime, currencyPair: formatedCurrency ? formatedCurrency : "EURUSD" }
-
-    debugger
 
 
     try {
@@ -50,43 +48,43 @@ const currencySlice = createSlice({
         },
         updateCurrentCurrencyName: (state, action: PayloadAction<string>) => {
             state.currentCurrencyName = action.payload
+        },
+        updateCurrencyHistoryTime: (state, action: PayloadAction<string>) => {
+            state.currencyHistoryTime = action.payload
         }
     },
     extraReducers(builder) {
         builder.addCase(fetchCurrencies.fulfilled, (state, action) => {
+            state.currentCurrencyInfo = null
             const sortedCurrencies = action.payload.filter(currency => currency.ticker.includes(state.currencyInputField))
             // We want to make sure that if there are no currencies or search string is empty we want the value to be null not Array(0) so the UI don't break
             const currenciesEmpty = sortedCurrencies.length === 0 || state.currencyInputField.length === 0
             state.allCurrencies = currenciesEmpty ? null : sortedCurrencies
         })
         builder.addCase(fetchCurrentCurrencyInfo.fulfilled, (state, action) => {
-
-            debugger
-
             const currencyData = []
             // TODO - Make a func that will dublicate the logic 
-            const openCurrencyData: CurrentCurrencyInfoType = {
-                label: "Open",
+            const openCurrencyData: CurrentCurrencyInfoObjectType = {
+                name: "Open",
                 data: (() => {
-                    const res: CurrentCurrencyDataType[] = []
+                    const res: any[] = []
 
                     action.payload.map((currency, index) => {
-                        res.push({ index, value: currency.open })
+                        res.push(currency.open)
                     })
 
                     return res
                 })()
-
             }
             currencyData.push(openCurrencyData)
 
-            const closeCurrencyData: CurrentCurrencyInfoType = {
-                label: "Open",
+            const closeCurrencyData: CurrentCurrencyInfoObjectType = {
+                name: "Close",
                 data: (() => {
-                    const res: CurrentCurrencyDataType[] = []
+                    const res: any[] = []
 
                     action.payload.map((currency, index) => {
-                        res.push({ index, value: currency.close })
+                        res.push(currency.close)
                     })
 
                     return res
@@ -95,13 +93,13 @@ const currencySlice = createSlice({
             }
             currencyData.push(closeCurrencyData)
 
-            const highCurrencyData: CurrentCurrencyInfoType = {
-                label: "Open",
+            const highCurrencyData: CurrentCurrencyInfoObjectType = {
+                name: "High",
                 data: (() => {
-                    const res: CurrentCurrencyDataType[] = []
+                    const res: any[] = []
 
                     action.payload.map((currency, index) => {
-                        res.push({ index, value: currency.high })
+                        res.push(currency.high)
                     })
 
                     return res
@@ -110,13 +108,14 @@ const currencySlice = createSlice({
             }
             currencyData.push(highCurrencyData)
 
-            const lowCurrencyData: CurrentCurrencyInfoType = {
-                label: "Open",
+            const lowCurrencyData: CurrentCurrencyInfoObjectType = {
+                name: "Low",
                 data: (() => {
-                    const res: CurrentCurrencyDataType[] = []
+                    const res: any[] = []
 
                     action.payload.map((currency, index) => {
-                        res.push({ index, value: currency.low })
+                        res.push(currency.low)
+
                     })
 
                     return res
@@ -134,13 +133,14 @@ const currencySlice = createSlice({
 
 export const updateCurrencyInputValue = currencySlice.actions.updateCurrencyInputValue
 export const updateCurrentCurrencyName = currencySlice.actions.updateCurrentCurrencyName
+export const updateCurrencyHistoryTime = currencySlice.actions.updateCurrencyHistoryTime
 
 export const currencyReducer = currencySlice.reducer
 
 type InitialStateType = {
     currencyInputField: string
     allCurrencies: CurrencyType[] | null
-    currentCurrencyInfo: CurrentCurrencyInfoType[] | null
+    currentCurrencyInfo: CurrentCurrencyInfoObjectType[] | null
     currentCurrencyName: string | null
     currencyHistoryTime: string
 }
@@ -166,6 +166,11 @@ export type CurrentCurrencyLabelTypes = "Open" | "Close" | "High" | "Low"
 export type CurrentCurrencyInfoType = {
     label: CurrentCurrencyLabelTypes
     data: CurrentCurrencyDataType[]
+}
+
+export type CurrentCurrencyInfoObjectType = {
+    name: string,
+    data: number[]
 }
 
 export type CurrencyHinstoryResponseType = {

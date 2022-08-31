@@ -1,18 +1,21 @@
 import styled from "styled-components/macro"
-import { Input, Currencies } from "src/main/components"
+import { Input, Currencies, Stats } from "src/main/components"
 import { ChangeEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { selectAllCurrencies, selectCurrencyInput } from "src/main/bll/selectors"
+import { selectAllCurrencies, selectCurrencyHistoryData, selectCurrencyInput, selectHistoryTime } from "src/main/bll/selectors"
 import { AppDispatch } from "src/main/bll/store"
 import { fetchCurrencies, fetchCurrentCurrencyInfo, updateCurrencyInputValue } from "src/main/bll/reducers/currencyReducer"
 import { selectCurrentCurrencyName } from "src/main/bll/selectors/selectCurrentCurrencyName"
 
 export const Holder = () => {
     const dispatch = useDispatch<AppDispatch>()
+
     const [didRender, setDidRender] = useState(false)
+    const currencyHistoryData = useSelector(selectCurrencyHistoryData)
     const currencyInputValue = useSelector(selectCurrencyInput)
     const allCurrencies = useSelector(selectAllCurrencies)
     const currentCurrencyName = useSelector(selectCurrentCurrencyName)
+    const currentHistoryTime = useSelector(selectHistoryTime)
 
     const handleUpdateCurrencyInputValue = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.currentTarget.value.toUpperCase()
@@ -29,9 +32,15 @@ export const Holder = () => {
 
     useEffect(() => {
         if (didRender) {
-            dispatch(fetchCurrentCurrencyInfo())
+            dispatch(fetchCurrentCurrencyInfo(""))
         }
     }, [currentCurrencyName])
+
+    useEffect(() => {
+        if (didRender) {
+            dispatch(fetchCurrentCurrencyInfo(""))
+        }
+    }, [currentHistoryTime])
 
 
     return (
@@ -43,10 +52,14 @@ export const Holder = () => {
                     placeholder={"Search currency value"}
                     onChange={handleUpdateCurrencyInputValue}
                     onButtonClick={fetchAllCurrecyData}
+                    // You can just press enter when entered the data in the input instead of clicking the button
+                    onEnter={fetchAllCurrecyData}
                 />
                 {allCurrencies && <Currencies />}
             </Inner>
-
+            <div>
+                {currencyHistoryData && <Stats />}
+            </div>
         </Wrapper>
     )
 }

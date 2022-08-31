@@ -1,21 +1,34 @@
+import {DetailedHTMLProps, InputHTMLAttributes, KeyboardEvent} from "react"
 import styled, { keyframes } from "styled-components"
 import { IconButton } from "src/main/components"
 
-type InputPropsValueType = {
+type DefaultInputPropsType = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement>;
+
+type InputPropsValueType = DefaultInputPropsType & {
     value: string
     placeholder: string
     onChange: (e: any) => void
     onButtonClick: () => void
+    onEnter?: () => void
 }
 
-export const Input = ({ value, placeholder, onChange, onButtonClick, }: InputPropsValueType) => {
+export const Input = ({ value, placeholder, onChange, onButtonClick, onKeyPress, onEnter }: InputPropsValueType) => {
+
+    const onKeyPressCallback = (e: KeyboardEvent<HTMLInputElement>) => {
+        onKeyPress && onKeyPress(e);
+        onEnter && e.key === "Enter" && onEnter();
+    };
 
     return (
         <Wrapper>
             <InputField
+                data-testid="search-input"
                 onChange={onChange}
                 placeholder={placeholder}
                 value={value}
+                onKeyPress={onKeyPressCallback}
+                
             />
             <IconButton onClick={onButtonClick} />
         </Wrapper>

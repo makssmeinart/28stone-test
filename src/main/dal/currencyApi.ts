@@ -6,7 +6,7 @@ export const currencyApi = {
         return resp.data
     },
     fetchCurrentCurrencyInfo: async ({ time, currencyPair }: CurrentCurrencyInfoPayloadType) => {
-        const resp = await instance.get(`/historical-chart/${time}/${currencyPair}`)
+        const resp = await instance.get(`/historical-chart/${time}/${currencyPair}?limit=25`)
         return resp.data
     }
 }

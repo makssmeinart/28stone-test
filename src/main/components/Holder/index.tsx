@@ -44,7 +44,7 @@ export const Holder = () => {
 
 
     return (
-        <Wrapper>
+        <Wrapper gap={currencyHistoryData && "1rem"}>
             <Inner>
                 {/* We can incapsulate all the value, placeholder... Inside of the Input component but we wont be able to re-use it if we will need to. */}
                 <Input
@@ -64,16 +64,24 @@ export const Holder = () => {
     )
 }
 
-const Wrapper = styled.div`
+const Wrapper: any = styled.div<{ gap: string }>`
     max-height: 700px;
     min-width: 320px;
     display: flex;
-    gap: 1rem;
+    gap: ${props => (props.gap ? props.gap : "0")};;
     margin: 0 1.5em;
     padding: 1.2rem 2rem;
     background-color: var(--fourth-color);
     border-radius: 1rem;
     overflow: hidden;
+
+    @media (max-width: 900px) {
+        flex-direction: column;
+        gap: 0;
+        max-width: 320px;
+        max-height: 590px !important;
+        padding: 1em;
+    }
 
     @media (max-height: 1000px) {
         max-height: 500px;

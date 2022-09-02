@@ -18,8 +18,10 @@ export const Stats = () => {
 
     const options: ApexOptions = {
         chart: {
+            width: '100%',
             height: 550,
             type: 'line',
+
             zoom: {
                 enabled: true,
             },
@@ -32,7 +34,7 @@ export const Stats = () => {
         <>
             {
                 historyDataNotEmpty ?
-                    <>
+                    <GrapthWrapper>
                         <div>
                             <Title>{currentCurrencyName}</Title>
                             <Subtitle>latest currency exchange prices</Subtitle>
@@ -51,15 +53,22 @@ export const Stats = () => {
                             <Button onClick={() => handleUpdateHistoryTime("15min")}>15 Min</Button>
                             <Button onClick={() => handleUpdateHistoryTime("30min")}>30 Min</Button>
                         </ButtonsWrapper>
-                    </>
+                    </GrapthWrapper>
                     :
-                    <div>
-                        Sorry no data was found on this currency pair
-                    </div>
+                    <NoData>
+                        <p>
+                            Sorry no data was found on  this currency pair...
+                        </p>
+                    </NoData>
             }
         </>
     )
 }
+
+const GrapthWrapper = styled.div`
+    max-width: 100%;
+    overflow-x: scroll;
+`
 
 const ButtonsWrapper = styled.div`
     margin-top: 1rem;
@@ -87,4 +96,11 @@ const Title = styled.h2`
 `
 const Subtitle = styled.p`
     font-size: 1.3rem;
+`
+const NoData = styled.div`
+    margin-top: 1rem;
+
+    p {
+        color: red;
+    }
 `

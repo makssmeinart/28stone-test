@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { currencyApi, CurrentCurrencyInfoPayloadType } from "src/main/dal/currencyApi"
 import { RootState } from "../store"
+import { updateStatus } from "./appReducer"
 
 const initialState: InitialStateType = {
     currencyInputField: "",
@@ -10,18 +11,24 @@ const initialState: InitialStateType = {
     currencyHistoryTime: "15min",
 }
 
-export const fetchCurrencies = createAsyncThunk("currency/fetchCurrencies", async () => {
+export const fetchCurrencies = createAsyncThunk("currency/fetchCurrencies", async (args: void, { dispatch }) => {
+    dispatch(updateStatus("loading"))
+
     try {
         const currencyData: CurrencyType[] = await currencyApi.fetchCurrenciesData()
+        dispatch(updateStatus("completed"))
         return currencyData
     }
     catch (e) {
         // TODO change the error reducer
+        dispatch(updateStatus("failed"))
         throw (e)
     }
 })
 
-export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentCurrencyInfo", async (temp: string, { getState }) => {
+export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentCurrencyInfo", async (temp: string, { getState, dispatch }) => {
+    dispatch(updateStatus("loading"))
+
     const { currencyReducer } = getState() as RootState
     const { currentCurrencyName, currencyHistoryTime } = currencyReducer
 
@@ -29,12 +36,13 @@ export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentC
 
     const payload: CurrentCurrencyInfoPayloadType = { time: currencyHistoryTime, currencyPair: formatedCurrency ? formatedCurrency : "EURUSD" }
 
-
     try {
         const currencyData: CurrencyHinstoryResponseType[] = await currencyApi.fetchCurrentCurrencyInfo(payload)
+        dispatch(updateStatus("completed"))
         return currencyData
     }
     catch (e) {
+        dispatch(updateStatus("failed"))
         throw (e)
     }
 })

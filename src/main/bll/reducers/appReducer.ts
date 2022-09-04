@@ -11,13 +11,18 @@ const appSlice = createSlice({
     reducers: {
         updateErrorMessage: (state, payload: PayloadAction<string>) => {
             state.errorMessage = payload.payload
+        },
+        updateStatus: (state, payload: PayloadAction<PendingStatusType>) => {
+            state.status = payload.payload
         }
+
     },
 })
 
 // Action Creators 
 
 export const updateErrorMessage = appSlice.actions.updateErrorMessage
+export const updateStatus = appSlice.actions.updateStatus
 
 export const appReducer = appSlice.reducer
 

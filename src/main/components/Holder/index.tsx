@@ -1,8 +1,8 @@
 import styled from "styled-components/macro"
-import { Input, Currencies, Stats } from "src/main/components"
+import { Input, Currencies, Stats, Loader } from "src/main/components"
 import { ChangeEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { selectAllCurrencies, selectCurrencyHistoryData, selectCurrencyInput, selectHistoryTime } from "src/main/bll/selectors"
+import { selectAllCurrencies, selectCurrencyHistoryData, selectCurrencyInput, selectHistoryTime, selectStatus } from "src/main/bll/selectors"
 import { AppDispatch } from "src/main/bll/store"
 import { fetchCurrencies, fetchCurrentCurrencyInfo, updateCurrencyInputValue } from "src/main/bll/reducers/currencyReducer"
 import { selectCurrentCurrencyName } from "src/main/bll/selectors/selectCurrentCurrencyName"
@@ -16,6 +16,7 @@ export const Holder = () => {
     const allCurrencies = useSelector(selectAllCurrencies)
     const currentCurrencyName = useSelector(selectCurrentCurrencyName)
     const currentHistoryTime = useSelector(selectHistoryTime)
+    const loadingStatus = useSelector(selectStatus)
 
     const handleUpdateCurrencyInputValue = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.currentTarget.value.toUpperCase()
@@ -42,6 +43,9 @@ export const Holder = () => {
         }
     }, [currentHistoryTime])
 
+    if (loadingStatus === "loading") {
+        return <Loader />
+    }
 
     return (
         <Wrapper gap={currencyHistoryData && "1rem"}>

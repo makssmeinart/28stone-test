@@ -23,6 +23,7 @@ export const Input = ({ value, placeholder, onChange, onButtonClick, onKeyPress,
     return (
         <Wrapper>
             <InputField
+                autoFocus={true}
                 data-testid="search-input"
                 onChange={onChange}
                 placeholder={placeholder}

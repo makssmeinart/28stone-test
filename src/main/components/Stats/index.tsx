@@ -48,7 +48,7 @@ export const Stats = () => {
                         />
 
                         <ButtonsWrapper>
-                            <Button onClick={() => handleUpdateHistoryTime("1min")}>1 Min</Button>
+                            <Button data-testid="chart-buttons" onClick={() => handleUpdateHistoryTime("1min")}>1 Min</Button>
                             <Button onClick={() => handleUpdateHistoryTime("5min")}>5 Min</Button>
                             <Button onClick={() => handleUpdateHistoryTime("15min")}>15 Min</Button>
                             <Button onClick={() => handleUpdateHistoryTime("30min")}>30 Min</Button>
@@ -70,9 +70,8 @@ const GrapthWrapper = styled.div`
     overflow-x: scroll;
 `
 
-const ButtonsWrapper = styled.div`
-    margin-top: 1rem;
-    margin-left: .85rem;
+export const ButtonsWrapper = styled.div`
+    margin: 1rem 0 .6rem .85rem;
     display: flex;
     gap: 1rem;
 `

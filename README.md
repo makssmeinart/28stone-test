@@ -31,3 +31,4 @@ Features:
 - Responsivness its done on the basic level there is better ways to do the chart. but I chose just simple scroll to make sure that the chart is not really small and you can see at least something on the screen.
 - I did not place API-KEY into the .evn file since API-KEY is required in the query params and that wouldn't make much sence.
 - The chart can be done better but i'm not sure what I have to put in it since I do not have maket or design with what I have to do...
+- I did not have time to do unit test to cover createAsync requests

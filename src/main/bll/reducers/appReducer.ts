@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { fetchCurrencies } from "./currencyReducer";
 
 const initialState: InitStateTypes = {
     errorMessage: null,

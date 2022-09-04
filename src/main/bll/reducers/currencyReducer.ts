@@ -1,8 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { AxiosError } from "axios"
 import { currencyApi, CurrentCurrencyInfoPayloadType } from "src/main/dal/currencyApi"
 import { handleErrors } from "src/main/utils"
-import { HandleErorrsPropsType } from "src/main/utils/handleErrors"
 import { RootState } from "../store"
 import { updateErrorMessage, updateStatus } from "./appReducer"
 

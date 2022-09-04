@@ -22,7 +22,8 @@ Technologies using:
 - Jest
 
 Features: 
-
+- This webapp is using HashRouter because of the glitch with github
+- Page not found if you go on some dodgy url http://localhost:3000/#/1232 it will take you to http://localhost:3000/#/404
 - This project is using root/src path system so the imports will look like this src/main/bll/...
 - This project is using index imports. So there are index.ts files in each folder and we export our files inside of it. So than after we can export multiple    files from the same folder for example: import {Chart, Holder, Currency} from "src/main/components". Instead of having 10 imports from different folder.
 - Error Handling - We have snackbar that will pop up if there are any errors - either Network error or some logical error the snackbar will pop up in the left corner.

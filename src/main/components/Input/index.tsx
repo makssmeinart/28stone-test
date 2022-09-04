@@ -1,5 +1,5 @@
 import {DetailedHTMLProps, InputHTMLAttributes, KeyboardEvent} from "react"
-import styled, { keyframes } from "styled-components"
+import styled from "styled-components"
 import { IconButton } from "src/main/components"
 
 type DefaultInputPropsType = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>,

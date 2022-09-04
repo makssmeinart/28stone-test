@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const instance = axios.create({
-    baseURL: `https://financialmodelingprep.com/api/v3/`,
+    baseURL: process.env.REACT_APP_BASE_URL,
     params: {
-        "apikey": "7dd54e030c0a69a11bf228b63ce7ec24"
+        "apikey": process.env.REACT_APP_API_KEY,
     }
 });

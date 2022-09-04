@@ -1,5 +1,5 @@
 import styled from "styled-components/macro"
-import { Input, Currencies, Stats, Loader } from "src/main/components"
+import { Input, Currencies, Stats, Loader, ErrorSnackbar } from "src/main/components"
 import { ChangeEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { selectAllCurrencies, selectCurrencyHistoryData, selectCurrencyInput, selectHistoryTime, selectStatus } from "src/main/bll/selectors"
@@ -33,13 +33,13 @@ export const Holder = () => {
 
     useEffect(() => {
         if (didRender) {
-            dispatch(fetchCurrentCurrencyInfo(""))
+            dispatch(fetchCurrentCurrencyInfo())
         }
     }, [currentCurrencyName])
 
     useEffect(() => {
         if (didRender) {
-            dispatch(fetchCurrentCurrencyInfo(""))
+            dispatch(fetchCurrentCurrencyInfo())
         }
     }, [currentHistoryTime])
 
@@ -59,11 +59,12 @@ export const Holder = () => {
                     // You can just press enter when entered the data in the input instead of clicking the button
                     onEnter={fetchAllCurrecyData}
                 />
-                {allCurrencies && <Currencies />}
+                {allCurrencies && <Currencies data-testid="currencies" />}
             </Inner>
             <div>
                 {currencyHistoryData && <Stats />}
             </div>
+            <ErrorSnackbar />
         </Wrapper>
     )
 }

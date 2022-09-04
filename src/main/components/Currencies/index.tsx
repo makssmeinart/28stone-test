@@ -8,7 +8,7 @@ export const Currencies = () => {
 
     const renderAllCurrencies = () => {
         return allCurrencies?.map((currency, index) => {
-            return <Currency key={currency.ticker} currency={currency} tableIndex={index} />
+            return <Currency data-testid="currency" key={currency.ticker} currency={currency} tableIndex={index} />
         })
     }
 

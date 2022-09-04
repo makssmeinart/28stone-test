@@ -1,7 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { AxiosError } from "axios"
 import { currencyApi, CurrentCurrencyInfoPayloadType } from "src/main/dal/currencyApi"
+import { handleErrors } from "src/main/utils"
+import { HandleErorrsPropsType } from "src/main/utils/handleErrors"
 import { RootState } from "../store"
-import { updateStatus } from "./appReducer"
+import { updateErrorMessage, updateStatus } from "./appReducer"
 
 const initialState: InitialStateType = {
     currencyInputField: "",
@@ -11,22 +14,34 @@ const initialState: InitialStateType = {
     currencyHistoryTime: "15min",
 }
 
-export const fetchCurrencies = createAsyncThunk("currency/fetchCurrencies", async (args: void, { dispatch }) => {
+export const fetchCurrencies = createAsyncThunk("currency/fetchCurrencies", async (args: void, { dispatch, getState }) => {
     dispatch(updateStatus("loading"))
 
     try {
+        const rootState = getState() as RootState
+        const currencyInputField = rootState.currencyReducer.currencyInputField
+
         const currencyData: CurrencyType[] = await currencyApi.fetchCurrenciesData()
+
+        // I need to filter this data here because in case the search returns empty array or we search for empty srting
+        // I want to update the appRedcuer/errorMessage value...
+        const sortedCurrencies = currencyData.filter(currency => currency.ticker.includes(currencyInputField))
+        if (sortedCurrencies.length === 0) {
+            dispatch(updateErrorMessage("The requested currency pairs were not found..."))
+        }
+        if (currencyInputField.length === 0) {
+            dispatch(updateErrorMessage("Please enter currency/currency pair"))
+        }
         dispatch(updateStatus("completed"))
-        return currencyData
+
+        return sortedCurrencies
     }
     catch (e) {
-        // TODO change the error reducer
-        dispatch(updateStatus("failed"))
-        throw (e)
+        return handleErrors({ e, dispatch })
     }
 })
 
-export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentCurrencyInfo", async (temp: string, { getState, dispatch }) => {
+export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentCurrencyInfo", async (args: void, { getState, dispatch }) => {
     dispatch(updateStatus("loading"))
 
     const { currencyReducer } = getState() as RootState
@@ -42,8 +57,7 @@ export const fetchCurrentCurrencyInfo = createAsyncThunk("currency/fetchCurrentC
         return currencyData
     }
     catch (e) {
-        dispatch(updateStatus("failed"))
-        throw (e)
+        return handleErrors({ e, dispatch })
     }
 })
 
@@ -63,8 +77,8 @@ const currencySlice = createSlice({
     },
     extraReducers(builder) {
         builder.addCase(fetchCurrencies.fulfilled, (state, action) => {
+            const sortedCurrencies = action.payload
             state.currentCurrencyInfo = null
-            const sortedCurrencies = action.payload.filter(currency => currency.ticker.includes(state.currencyInputField))
             // We want to make sure that if there are no currencies or search string is empty we want the value to be null not Array(0) so the UI don't break
             const currenciesEmpty = sortedCurrencies.length === 0 || state.currencyInputField.length === 0
             state.allCurrencies = currenciesEmpty ? null : sortedCurrencies
@@ -75,9 +89,9 @@ const currencySlice = createSlice({
             const openCurrencyData: CurrentCurrencyInfoObjectType = {
                 name: "Open",
                 data: (() => {
-                    const res: any[] = []
+                    const res: number[] = []
 
-                    action.payload.map((currency, index) => {
+                    action.payload.map((currency) => {
                         res.push(currency.open)
                     })
 
@@ -89,9 +103,9 @@ const currencySlice = createSlice({
             const closeCurrencyData: CurrentCurrencyInfoObjectType = {
                 name: "Close",
                 data: (() => {
-                    const res: any[] = []
+                    const res: number[] = []
 
-                    action.payload.map((currency, index) => {
+                    action.payload.map((currency) => {
                         res.push(currency.close)
                     })
 
@@ -104,9 +118,9 @@ const currencySlice = createSlice({
             const highCurrencyData: CurrentCurrencyInfoObjectType = {
                 name: "High",
                 data: (() => {
-                    const res: any[] = []
+                    const res: number[] = []
 
-                    action.payload.map((currency, index) => {
+                    action.payload.map((currency) => {
                         res.push(currency.high)
                     })
 
@@ -119,9 +133,9 @@ const currencySlice = createSlice({
             const lowCurrencyData: CurrentCurrencyInfoObjectType = {
                 name: "Low",
                 data: (() => {
-                    const res: any[] = []
+                    const res: number[] = []
 
-                    action.payload.map((currency, index) => {
+                    action.payload.map((currency) => {
                         res.push(currency.low)
 
                     })

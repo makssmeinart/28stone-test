@@ -37,7 +37,7 @@ export const Stats = () => {
                     <GrapthWrapper>
                         <div>
                             <Title>{currentCurrencyName}</Title>
-                            <Subtitle>latest currency exchange prices</Subtitle>
+                            <Subtitle>latest currency exchange prices per days</Subtitle>
                         </div>
                         < ReactApexChart
                             options={options}

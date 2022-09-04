@@ -9,7 +9,7 @@ const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
-        updateErrorMessage: (state, payload: PayloadAction<string>) => {
+        updateErrorMessage: (state, payload: PayloadAction<string | null>) => {
             state.errorMessage = payload.payload
         },
         updateStatus: (state, payload: PayloadAction<PendingStatusType>) => {
